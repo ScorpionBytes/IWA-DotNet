@@ -47,7 +47,7 @@ jobs:
       - name: Download Fortify ScanCentral Client
         uses: fortify/gha-setup-scancentral-client@v2
         with:
-          version: 22.1.2
+          version: 23.1.0
       - name: Package Code + Dependencies
         run: scancentral package -bt msbuild -bf IWA.Net.sln -o package.zip -oss
 
@@ -57,8 +57,8 @@ jobs:
       - name: Perform SAST Scan
         run: java -jar ${env:FOD_UPLOAD_JAR} -z package.zip -aurl ${env:FOD_API_URL} -purl ${env:FOD_URL} -rid ${env:FOD_RELEASE_ID} -tc ${env:FOD_TENANT} -uc ${env:FOD_USER} ${env:FOD_PAT} -n ${env:FOD_UPLOADER_NOTES} -ep 2 -pp 0 -I 1 -apf
         env:
-          FOD_URL: "https://ams.fortify.com/"
-          FOD_API_URL: "https://api.ams.fortify.com/"
+          FOD_URL: ${{ secrets.FOD_URL }}
+          FOD_API_URL: ${{ secrets.FOD_API_URL }}
           FOD_TENANT: ${{ secrets.FOD_TENANT }}
           FOD_USER: ${{ secrets.FOD_USER }}
           FOD_PAT: ${{ secrets.FOD_PAT }}
@@ -69,7 +69,7 @@ jobs:
       - name: Export results to GitHub-optimized SARIF
         uses: fortify/gha-export-vulnerabilities@v1
         with:
-          fod_base_url: "https://ams.fortify.com/"
+          fod_base_url: ${{ secrets.FOD_URL }}
           fod_tenant: ${{ secrets.FOD_TENANT }}
           fod_user: ${{ secrets.FOD_USER }}
           fod_password: ${{ secrets.FOD_PAT }}
